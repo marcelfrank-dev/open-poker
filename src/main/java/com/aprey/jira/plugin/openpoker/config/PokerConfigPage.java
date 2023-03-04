@@ -12,14 +12,15 @@ import com.atlassian.jira.web.action.JiraWebActionSupport;
 import webwork.action.Action;
 import webwork.action.ServletActionContext;
 
-import static com.aprey.jira.plugin.openpoker.api.config.ConfigurationManager.getStoredAllowedProjects;
-import static com.aprey.jira.plugin.openpoker.api.config.ConfigurationManager.storeAllowedProjects;
+import static com.aprey.jira.plugin.openpoker.api.config.ConfigurationManager.*;
 
 @SupportedMethods({ RequestMethod.GET })
 public class PokerConfigPage extends JiraWebActionSupport {
 
 	//List of allowed projects
 	private List<String> allowedProjects = new ArrayList<>();
+	//Setting for keepVotesOverview
+	private boolean keepVotesOverview = false;
 
 	/**
 	 * Method is called when the page is first loaded
@@ -27,6 +28,7 @@ public class PokerConfigPage extends JiraWebActionSupport {
 	@Override
 	public String doDefault() throws Exception {
 		allowedProjects.addAll(getStoredAllowedProjects());
+		keepVotesOverview = getStoredVotesOverviewSetting();
 		return Action.INPUT;
 	}
 
@@ -35,9 +37,12 @@ public class PokerConfigPage extends JiraWebActionSupport {
 	 */
 	@Override
 	@SupportedMethods({ RequestMethod.POST })
-	protected String doExecute() throws Exception {
+	protected String doExecute() {
 		String updatedAllowedProjects = getUpdatedAllowedProjects();
 		storeAllowedProjects(updatedAllowedProjects);
+
+		String updateKeepVotesOverview = getUpdatedKeepVotesOverview();
+		storeVotesOverviewSetting(updateKeepVotesOverview);
 
 		if ( !getHasErrorMessages() ) {
 			return returnComplete("openPokerConfig!default.jspa");
@@ -52,8 +57,17 @@ public class PokerConfigPage extends JiraWebActionSupport {
 	 */
 	private static String getUpdatedAllowedProjects() {
 		HttpServletRequest request = ServletActionContext.getRequest();
-		String updatedAllowedProjects = request.getParameter("allowedProjects");
-		return updatedAllowedProjects;
+		return request.getParameter("allowedProjects");
+	}
+
+	/**
+	 * Method to get the updated keep overview setting from the form
+	 *
+	 * @return String of setting if votes overview should be kept after apply
+	 */
+	private static String getUpdatedKeepVotesOverview() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		return request.getParameter("keepVotesOverview");
 	}
 
 	public List<String> getAllowedProjects() {
@@ -74,5 +88,13 @@ public class PokerConfigPage extends JiraWebActionSupport {
 
 	public String getURL() {
 		return "openPokerConfig.jspa";
+	}
+
+	public boolean isKeepVotesOverview() {
+		return keepVotesOverview;
+	}
+
+	public void setKeepVotesOverview(boolean keepVotesOverview) {
+		this.keepVotesOverview = keepVotesOverview;
 	}
 }

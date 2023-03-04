@@ -38,6 +38,20 @@ public abstract class ConfigurationManager {
 	}
 
 	/**
+	 * Method to get the stored value for the votes overview after apply from plugin settings
+	 *
+	 * @return Boolean of the setting
+	 */
+	public static boolean getStoredVotesOverviewSetting() {
+		PluginSettings pluginSettings = getPluginSettings();
+		String keepVotesOverview = ((String) pluginSettings.get("keepVotesOverview"));
+		if ( keepVotesOverview != null && !keepVotesOverview.isEmpty() ) {
+			return keepVotesOverview.equals("true");
+		}
+		return false;
+	}
+
+	/**
 	 * Method to store the updated allowed projects in plugin settings
 	 *
 	 * @param updatedAllowedProjects String of allowed projects
@@ -45,5 +59,15 @@ public abstract class ConfigurationManager {
 	public static void storeAllowedProjects(String updatedAllowedProjects) {
 		PluginSettings pluginSettings = getPluginSettings();
 		pluginSettings.put("allowedProjects", updatedAllowedProjects);
+	}
+
+	/**
+	 * Method to store the updated allowed projects in plugin settings
+	 *
+	 * @param updatedKeepVotesOverview boolean of updated keep votes setting
+	 */
+	public static void storeVotesOverviewSetting(String updatedKeepVotesOverview) {
+		PluginSettings pluginSettings = getPluginSettings();
+		pluginSettings.put("keepVotesOverview", updatedKeepVotesOverview);
 	}
 }

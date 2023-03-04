@@ -12,9 +12,19 @@ $webResourceManager.requireResource("com.aprey.jira.plugin.openpoker.open-poker:
         </div>
     </div>
 </header>
-<h2>Permissions</h2>
 <form action="$action.getURL()" class="aui" method="POST">
-    <input type="hidden" name="atl_token" value="$atl_token" />
+    <input type="hidden" name="atl_token" value="$atl_token"/>
+    <input type="hidden" id="keepVotesOverview" name="keepVotesOverview" value="$!{keepVoteOverview.equals(true)}"/>
+    <h2>Settings</h2>
+    <table class="aui" style="max-width: 800px;">
+        <tbody>
+        <tr>
+            <td>Keep overview of votes after apply:</td>
+            <td><aui-toggle label="keepVotesOverviewToggle" #if($keepVotesOverview) checked #end id="keepVotesOverviewToggle"></aui-toggle></td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>Permissions</h2>
     <input type="hidden" id="allowedProjects" name="allowedProjects" value="$action.getAllowedProjectsValue()"/>
     <fieldset>
         <label for="allowedProjects" class="allowedProjectsSelectLabel">Projects:</label>
